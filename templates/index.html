@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Recently Saved</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div v-if="isLoaded" class="overflow-x-auto">
+        <table class="table table-compact w-full">
+          <thead>
+            <tr>
+              <th @click="sort_id" class="link">ID</th>
+              <th>Link</th>
+              <th @click="sort_title" class="link">Title</th>
+              <th @click="sort_artist" class="link">Artist</th>
+              <th @click="sort_release" class="link">Released_at</th>
+              <th>Genres</th>
+              <th @click="sort_pop" class="link">Popularity</th>
+              <th>Label</th>
+              <th @click="sort_added" class="link">Added_at</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="album in savedAlbums">
+              <td v-text="album.ID" />
+              <td>
+                <a :href="album.href"><img :src="album.thumbnail_url" /></a>
+              </td>
+              <td v-text="album.title" />
+              <td v-text="album.artist" />
+              <td v-text="album.released_at" />
+              <td v-text="album.genres" />
+              <td v-text="album.popularity" />
+              <td v-text="album.label" />
+              <td v-text="album.added_at" />
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div v-else class="w-full h-screen flex justify-center items-center">
+        <div class="radial-progress">LOADING</div>
+      </div>
+    </div>
+    <script>
+      var app = new Vue({
+        el: "#app",
+        data: {
+          message: "Hello Vue!",
+          savedAlbums: [],
+          isLoaded: false,
+        },
+        methods: {
+          sort_id() {
+            this.isLoaded = false;
+            this.savedAlbums.sort((a, b) => {
+              return b.ID > a.ID ? -1 : 1;
+            });
+            this.isLoaded = true;
+          },
+          sort_title() {
+            this.isLoaded = false;
+            this.savedAlbums.sort((a, b) => {
+              return b.title > a.title ? -1 : 1;
+            });
+            this.isLoaded = true;
+          },
+          sort_artist() {
+            this.isLoaded = false;
+            this.savedAlbums.sort((a, b) => {
+              return b.artist > a.artist ? -1 : 1;
+            });
+            this.isLoaded = true;
+          },
+          sort_release() {
+            this.isLoaded = false;
+            this.savedAlbums.sort((a, b) => {
+              return b.released_at < a.released_at ? -1 : 1;
+            });
+            this.isLoaded = true;
+          },
+          sort_pop() {
+            this.isLoaded = false;
+            this.savedAlbums.sort((a, b) => {
+              return b.popularity < a.popularity ? -1 : 1;
+            });
+            this.isLoaded = true;
+          },
+          sort_added() {
+            this.isLoaded = false;
+            this.savedAlbums.sort((a, b) => {
+              return b.added_at < a.added_at ? -1 : 1;
+            });
+            this.isLoaded = true;
+          },
+        },
+        mounted() {
+          fetch("/get_saved_albums").then((res) => {
+            res.json().then((jval) => {
+              this.savedAlbums = jval;
+              console.log(this.savedAlbums);
+              this.isLoaded = true;
+            });
+          });
+        },
+      });
+    </script>
+  </body>
+</html>
